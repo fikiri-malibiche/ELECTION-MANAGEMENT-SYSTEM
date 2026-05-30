@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <link rel="stylesheet" href="/CSS/style.css">
+</head>
+<body id="body">
+    <form action="/PHP/login_form.php" method="POST" id="login_form">
+        <div id="container">
+            <div>
+                <h2>
+                    LOGIN FORM
+                </h2>
+            </div>
+            <div id="usercontainer">
+                <div>
+                    <input type="text" id="userid" name="username" placeholder="Enter username">
+                </div>
+                <div>
+                    <label for="message" id="user_error"></label>
+                </div>
+            </div>
+            <div id="passwordcontainer">
+                <div>
+                    <input type="password" name="password" id="passwordid" placeholder="Enter password">
+                </div>
+                <div >
+                    <label for="message" id="pass_error"></label>
+                </div>
+            </div>
+            <div id="submitContainer">
+                <input type="submit" id="submitBtn" value="Login">
+            </div>
+            <div id="link">
+                <label for="" id="registerlabel">Do not have an account?</label>
+                <a href="form.html" id="registerlink">Register here</a>
+            </div> 
+        </div>
+    </form>
+    <script src="/JS/login.js"></script>  
+</body>
+</html>
