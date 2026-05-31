@@ -11,11 +11,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $stmt->execute([$username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if($user && password_verify($password, $user['user_password'])){
-            echo "Login successful.";
+            header("Location: /HTML/homepage.html");
+            exit;
         }else{
             echo "Invalid username or password.";
-        }        
+        }
     }
 }else{
     die("ACCESS DENIED");
 }
+?>
