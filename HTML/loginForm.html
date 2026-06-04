@@ -1,49 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Form</title>
-    <link rel="stylesheet" href="../CSS/style.css">
-</head>
-<body id="body">
-    <form id="login_form" novalidate>
-        <div id="container">
-            <div>
-                <h2>
-                    LOGIN FORM
-                </h2>
-            </div>
-            <div id="usercontainer">
-                <div class="input_icon_box">
-                    <img src="/IMAGES/username.png" alt="" class="input_icon">
-                    <input type="text" id="userid" name="username" placeholder="Enter username">
-                </div>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login Form</title>
+        <link rel="stylesheet" href="../CSS/style.css">
+    </head>
+    <body id="body">
+        <form id="login_form" novalidate>
+            <div id="container">
                 <div>
-                    <label for="message" id="user_error"></label>
+                    <h2>
+                        LOGIN
+                    </h2>
+                </div>
+                <div id="usercontainer">
+                    <div class="input_icon_box">
+                        <img src="/IMAGES/username.png" alt class="input_icon">
+                        <input type="text" id="userid" name="username"
+                            placeholder="Enter username">
+                    </div>
+                    <div>
+                        <label for="message" id="user_error"></label>
+                    </div>
+                </div>
+                <div id="passwordcontainer">
+                    <div class="input_icon_box">
+                        <img src="/IMAGES/password.png" alt class="input_icon">
+                        <input type="password" name="password" id="passwordid"
+                            placeholder="Enter password">
+                    </div>
+                    <div>
+                        <label for="message" id="pass_error"></label>
+                    </div>
+                </div>
+                <div id="messageContainer">
+                    <label id="message"></label>
+                </div>
+                <div id="submitContainer">
+                    <button type="button" id="submitBtn">Login</button>
+                </div>
+                <div id="link">
+                    <label for id="registerlabel">Do not have an
+                        account?</label>
+                    <a href="form.html" id="registerlink">Register here</a>
                 </div>
             </div>
-            <div id="passwordcontainer">
-                <div class="input_icon_box">
-                    <img src="/IMAGES/password.png" alt="" class="input_icon">
-                    <input type="password" name="password" id="passwordid" placeholder="Enter password">
-                </div>
-                <div >
-                    <label for="message" id="pass_error"></label>
-                </div>
-            </div>
-            <div id="messageContainer">
-                <label id="message"></label>
-            </div>
-            <div id="submitContainer">
-                <button type="button" id="submitBtn">Login</button>
-            </div>
-            <div id="link">
-                <label for="" id="registerlabel">Do not have an account?</label>
-                <a href="form.html" id="registerlink">Register here</a>
-            </div> 
-        </div>
-    </form>
-    <script src="../JS/login.js"></script>
-</body>
+        </form>
+        <script src="../JS/login.js"></script>
+    </body>
 </html>

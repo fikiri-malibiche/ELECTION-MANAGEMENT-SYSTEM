@@ -1,13 +1,13 @@
-          <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Home Page</title>
-                <link rel="stylesheet" href="/CSS/home.css">
+ <!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Home Page</title>
+        <link rel="stylesheet" href="/CSS/home.css">
     </head>
     <body>
-        <form action="/PHP/getCandidateID.php" id="form" method="POST"> 
+        <form action="/PHP/getCandidateID.php" id="form" method="POST">
             <div id="container">
                 <div id="links">
                     <ul>
@@ -20,7 +20,9 @@
             <h3>PRESIDENT ELECTION SYSTEM</h3>
             <h4>SELECT A CANDIDATE</h4>
             <div id="imageContainer">
-                <div id="image1" class="candidate-card" data-candidate-name="samia s. hassan">
+                <div id="image1" class="candidate-card"
+                    data-candidate-name="samia s. hassan"
+                    data-candidate-id="1">
                     <img src="/IMAGES/samia1.jpg" alt="Samia S. Hassan">
                     <div id="message1">
                         <span id="notification1"></span>
@@ -29,7 +31,9 @@
                         <span class="candidate-name">SAMIA S. HASSAN</span>
                     </div>
                 </div>
-                <div id="image2" class="candidate-card" data-candidate-name="tundu a. lissu">
+                <div id="image2" class="candidate-card"
+                    data-candidate-name="tundu a. lissu"
+                    data-candidate-id="2">
                     <img src="/IMAGES/lissu1.jpg" alt="Tundu A. Lissu">
                     <div id="message2">
                         <span id="notification2"></span>
@@ -39,7 +43,8 @@
                     </div>
                 </div>
             </div>
-            <input type="hidden" name="candidate_name" id="candidate_name" value="">
+            <input type="hidden" name="candidate_name" id="candidate_name" value>
+            <input type="hidden" name="userID" id="userID" value>
             <div id="submitContainer">
                 <input type="submit" id="submitBtn" value="submit">
             </div>
@@ -47,7 +52,18 @@
                 <div id="popupMessage"></div>
                 <button type="button" id="popupClose">Close</button>
             </div>
-          </form> 
-          <script src="/JS/home.js"></script>
+        </form>
+        <script>
+            // fetch current session user id to populate hidden input
+            fetch('/PHP/getSessionUser.php')
+                .then(r => r.json())
+                .then(data => {
+                    if (data && data.userID) {
+                        const el = document.getElementById('userID');
+                        if (el) el.value = data.userID;
+                    }
+                }).catch(() => {});
+        </script>
+        <script src="/JS/home.js"></script>
     </body>
-    </html>
+</html>

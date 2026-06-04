@@ -6,7 +6,7 @@ body{
     text-align: center;
     margin-top: 0;
     margin: 0;
-    background-color: rgb(229, 236, 236);
+    background-color: rgba(28, 36, 40, 0.971);
     padding: clamp(8px, 2vw, 20px);
 }
 #container{
@@ -160,6 +160,7 @@ label{
     margin-top: 10px;
     margin-left: auto;
     margin-right: auto;
+    cursor: pointer;
 }
 #sex{
     display: flex;
@@ -244,4 +245,7 @@ a:hover{
 #body{
     margin-top: 20px;
 }
-
+#userid::placeholder,#passwordid::placeholder{
+    opacity: 0.7;
+    font-size: clamp(13px, 2vw, 16px);
+}
