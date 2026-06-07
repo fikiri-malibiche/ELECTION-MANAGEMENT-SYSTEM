@@ -2,7 +2,6 @@
 header('Content-Type: application/json');
 require "DBConnection.php";
 session_start();
-
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $input = json_decode(file_get_contents('php://input'), true);
     $email = isset($input['email']) ? trim($input['email']) : "";
@@ -16,18 +15,18 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         ]);
         exit;
     }
-    $sql = "SELECT userID, email, user_password FROM voter WHERE email = ?";
+    $sql = "SELECT voterID, email, user_password FROM voter WHERE email = ?";
     $stmt = $conn->prepare($sql);
     $stmt->execute([$email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if($user && password_verify($password, $user['user_password'])){
-        $_SESSION['userID'] = $user['userID'];
+        $_SESSION['voterID'] = $user['voterID'];
         echo json_encode([
             "success" => true,
             "message" => "Login successful!",
             "redirect" => "/HTML/homepage.html",
-            "userID" => $user['userID']
+            "voterID" => $user['voterID']
         ]);
         exit;
     }else{

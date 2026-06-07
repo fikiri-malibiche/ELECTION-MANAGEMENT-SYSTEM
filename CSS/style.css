@@ -32,7 +32,7 @@ body{
 #firstname,#lastname,#sex,#contact,#email_address,#username,#password,#confirm_field,#usercontainer,#passwordcontainer,#submitContainer{
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     margin-bottom: 15px;
 }
 label{

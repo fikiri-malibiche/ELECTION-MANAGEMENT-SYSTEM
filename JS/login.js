@@ -49,35 +49,41 @@ function handleLogin() {
   const loginData = { email: user, 
                       password: pass 
                     };
-  fetch("/PHP/login_form.php", {
+  fetch("../PHP/login_form.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(loginData),
   })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data && data.success) {
-        showMessage("Login successful! Redirecting...", true);
-        // keep message visible until redirect
-        const msgEl = document.getElementById("message");
-        if (msgEl && msgEl._hideTimeout) clearTimeout(msgEl._hideTimeout);
+    .then((response) => response.text())
+    .then((text) => {
+      try {
+        const data = JSON.parse(text);
+        if (data && data.success) {
+          showMessage("Login successful! Redirecting...", true);
+          // keep message visible until redirect
+          const msgEl = document.getElementById("message");
+          if (msgEl && msgEl._hideTimeout) clearTimeout(msgEl._hideTimeout);
 
-        const delayBeforeFade = 1500;
-        const fadeDuration = 400;
-        const container = document.getElementById("container");
-        setTimeout(() => {
-          if (container) {
-            container.classList.add("fade-out");
-          }
-        }, delayBeforeFade);
-        // redirect after fade completes
-        setTimeout(() => {
-          window.location.href = data.redirect;
-        }, delayBeforeFade + fadeDuration);
-      } else {
-        const msg =
-          data && data.message ? data.message : "Invalid response from server";
-        showMessage(msg, false);
+          const delayBeforeFade = 1500;
+          const fadeDuration = 400;
+          const container = document.getElementById("container");
+          setTimeout(() => {
+            if (container) {
+              container.classList.add("fade-out");
+            }
+          }, delayBeforeFade);
+          // redirect after fade completes
+          setTimeout(() => {
+            window.location.href = data.redirect;
+          }, delayBeforeFade + fadeDuration);
+        } else {
+          const msg =
+            data && data.message ? data.message : "Invalid response from server";
+          showMessage(msg, false);
+        }
+      } catch (parseError) {
+        console.error("Login response text:", text);
+        throw new Error("Invalid JSON response from server");
       }
     })
     .catch((error) => {
@@ -93,7 +99,7 @@ if (loginForm) {
   // prevent accidental native submit if Enter is pressed inside inputs
   loginForm.addEventListener("submit", function (e) {
     e.preventDefault();
-    submitBtn.disable = true
+    submitBtn.disabled = true;
     handleLogin();
   });
 }
