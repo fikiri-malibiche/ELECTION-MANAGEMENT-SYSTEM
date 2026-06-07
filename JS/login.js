@@ -46,7 +46,9 @@ function handleLogin() {
   if (hasError) return;
 
   // Send login request via Fetch API as JSON
-  const loginData = { username: user, password: pass };
+  const loginData = { email: user, 
+                      password: pass 
+                    };
   fetch("/PHP/login_form.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -60,9 +62,8 @@ function handleLogin() {
         const msgEl = document.getElementById("message");
         if (msgEl && msgEl._hideTimeout) clearTimeout(msgEl._hideTimeout);
 
-        // delay before starting fade so message stays visible (2s)
-        const delayBeforeFade = 1500; // ms
-        const fadeDuration = 400; // should match CSS transition (400ms)
+        const delayBeforeFade = 1500;
+        const fadeDuration = 400;
         const container = document.getElementById("container");
         setTimeout(() => {
           if (container) {
@@ -92,9 +93,8 @@ if (loginForm) {
   // prevent accidental native submit if Enter is pressed inside inputs
   loginForm.addEventListener("submit", function (e) {
     e.preventDefault();
+    submitBtn.disable = true
     handleLogin();
   });
 }
 
-// debug output to ensure script loaded
-console.log("login.js loaded");

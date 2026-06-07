@@ -5,7 +5,6 @@ const maleRadio = document.getElementById("male_radio");
 const femaleRadio = document.getElementById("female_radio");
 const phoneNumber = document.getElementById("phone_number");
 const email = document.getElementById("email");
-const username = document.getElementById("username_field");
 const password = document.getElementById("password_field");
 const confirmPassword = document.getElementById("confirm_field");
 const submit = document.getElementById("submitButton");
@@ -17,7 +16,6 @@ const lastSpan = document.getElementById("last_name_error");
 const sexSpan = document.getElementById("sex_error");
 const phoneSpan = document.getElementById("phone_error");
 const emailSpan = document.getElementById("email_error");
-const userSpan = document.getElementById("user_error");
 const passSpan = document.getElementById("pass_error");
 const confirmSpan = document.getElementById("confirm_error");
 
@@ -32,9 +30,8 @@ form.addEventListener("submit",function(event){
     const isEmailValid = validateEmail();
     const isPasswordValid = validatePassword();
     const isConfirmPasswordValid = validateConfirmPassword();
-    const isUsernameValid = validateUsername();
 
-    if(isLastNameValid && isFirstNameValid && isSexValid && isPhoneNumberValid && isEmailValid && isPasswordValid && isConfirmPasswordValid && isUsernameValid){
+    if(isLastNameValid && isFirstNameValid && isSexValid && isPhoneNumberValid && isEmailValid && isPasswordValid && isConfirmPasswordValid){
         submit.value = "Creating...";
         result.style.background = "green";
         result.style.color="white";
@@ -46,7 +43,6 @@ form.addEventListener("submit",function(event){
             firstName.textContent = "";
             lastName.textContent = "";
             email.textContent = "";
-            username.textContent = "";
             password.textContent = "";
 
         },3000);
@@ -83,9 +79,6 @@ form.addEventListener("submit",function(event){
             passSpan.textContent = "Password needs 8 characters, 1 uppercase letter, 1 number, and 1 special symbol";
             passSpan.style.color = "red";
         }
-    });
-    username.addEventListener("input",function(){
-        userSpan.textContent = "";
     });
     confirmPassword.addEventListener("input",function(){
         confirmSpan.textContent = "";
@@ -172,25 +165,6 @@ form.addEventListener("submit",function(event){
         }
     }
    }
-
-    function validateUsername() {
-    let usernamePattern = "^[a-zA-Z0-9]{5,}$";
-    const regex = new RegExp(usernamePattern);
-    if(username.value === ""){
-        userSpan.textContent = "Username name is required";
-        userSpan.style.color = "red";
-        return false;
-    } else{
-        if(regex.test(username.value)){
-        return true;
-    } else {
-        userSpan.textContent = "Invalid username name";
-        userSpan.style.color = "red";
-        return false;
-        }
-    }
-   }
-
     function validatePassword() {
     let passPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$";
     const regex = new RegExp(passPattern);

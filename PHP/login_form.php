@@ -5,10 +5,10 @@ session_start();
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $input = json_decode(file_get_contents('php://input'), true);
-    $username = isset($input['username']) ? trim($input['username']) : "";
+    $email = isset($input['email']) ? trim($input['email']) : "";
     $password = isset($input['password']) ? $input['password'] : "";
 
-    if($username == "" || $password == ""){
+    if($email == "" || $password == ""){
         http_response_code(400);
         echo json_encode([
             "success" => false,
@@ -16,10 +16,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         ]);
         exit;
     }
-
-    $sql = "SELECT userID, username, user_password FROM user WHERE username = ?";
+    $sql = "SELECT userID, email, user_password FROM voter WHERE email = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->execute([$username]);
+    $stmt->execute([$email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if($user && password_verify($password, $user['user_password'])){

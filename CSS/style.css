@@ -100,7 +100,7 @@ label{
     box-sizing: border-box;
 }
 #first_name_field::placeholder,#last_name_field::placeholder,#phone_number::placeholder,#email::placeholder,#username_field::placeholder,#password_field::placeholder,#confirm_field::placeholder{
-    opacity: 0.7;
+    opacity: 0.8;
     font-size: clamp(13px, 2vw, 16px);
 }
 #messageContainer{
@@ -171,7 +171,7 @@ label{
     align-items: center;
 }
 #submitButton:hover,#submitBtn:hover{
-    background-color: rgba(77, 255, 7, 0.7);
+    background-color: rgb(18, 84, 4);
     transition:background-color 0.3s  ;
 }
 #submitButton:disabled{
@@ -246,6 +246,6 @@ a:hover{
     margin-top: 20px;
 }
 #userid::placeholder,#passwordid::placeholder{
-    opacity: 0.7;
+    opacity: 0.8;
     font-size: clamp(13px, 2vw, 16px);
 }
