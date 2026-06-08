@@ -1,11 +1,13 @@
 <?php
+header('Content-Type: application/json');
 require "DBConnection.php";
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $firstName = isset($_POST['first_name']) ? $_POST['first_name'] : "";
-    $lastName = isset($_POST['last_name']) ? $_POST['last_name'] : "";
-    $phoneNumber = isset($_POST['phone_number']) ? $_POST['phone_number'] : "";
-    $email = isset($_POST['email']) ? $_POST['email'] : "";
-    $password = isset($_POST['password']) ? $_POST['password'] : "";
+    $input = json_decode(file_get_contents('php://input'), true);
+    $firstName = isset($input['first_name']) ? $input['first_name'] : "";
+    $lastName = isset($input['last_name']) ? $input['last_name'] : "";
+    $phoneNumber = isset($input['phone_number']) ? $input['phone_number'] : "";
+    $email = isset($input['email']) ? $input['email'] : "";
+    $password = isset($input['password']) ? $input['password'] : "";
     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
     $sex = "";
     $full_name = $firstName." ".$lastName;
@@ -15,13 +17,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $sex = "";
     }
     if($firstName == "" || $lastName == "" || $phoneNumber == "" || $email == ""|| $password == "" || $sex == ""){
-        echo "Please fill in all the fields.";
+        http_response_code(403);
+        echo json_encode(['error'=>'All fields are required']);
+        exit;
     }else{
         $sql = "INSERT INTO voter (full_name, sex, phone_number,email,user_password) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$full_name, $sex,$phoneNumber,$email,$hashed_password]);
-        echo "<p>User registered successfully.</p>";
+        http_response_code(200);
+        echo json_encode(['message'=>'Account created']);
+        exit;
     }
 }else{
-    die("ACCESS DENIED");
+    http_response_code(500);
+    echo json_encode(['error'=>'ACCESS DENIED']);
+    exit;
 }

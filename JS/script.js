@@ -35,7 +35,6 @@ form.addEventListener("submit",function(event){
         submit.value = "Creating...";
         result.style.background = "green";
         result.style.color="white";
-        result.textContent = "Account created successfully"
         setTimeout(function(){
             result.textContent = "";
             submit.value = "Submit";
@@ -46,6 +45,36 @@ form.addEventListener("submit",function(event){
             password.textContent = "";
 
         },3000);
+        let my_sex = "";
+        if(maleRadio.checked){
+            my_sex = "male";
+        }else if(femaleRadio.checked){
+            my_sex = "female";
+        }
+        const data = {
+            first_name:firstName.value,
+            last_name:lastName.value,
+            sex: my_sex,
+            phone_number: phoneNumber.value,
+            email:email.value,
+            password: password.value
+        }
+         fetch('/PHP/create_account.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(res =>{
+            if(res.status === 200){
+                 result.textContent = "Account created successfully";
+            }else if(res.status === 403){
+                result.textContent = "please fill all fields";
+            }else{
+                result.textContent = "Server Error";
+            }
+        })
+        .catch(err => {
+            result.textContent ='Network error: ' + err.message;
+        });
         form.submit();
     }
 });

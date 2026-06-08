@@ -59,7 +59,7 @@ function handleLogin() {
       try {
         const data = JSON.parse(text);
         if (data && data.success) {
-          showMessage("Login successful! Redirecting...", true);
+          showMessage(data.message, true);
           // keep message visible until redirect
           const msgEl = document.getElementById("message");
           if (msgEl && msgEl._hideTimeout) clearTimeout(msgEl._hideTimeout);

@@ -8,6 +8,7 @@ const form = document.getElementById("form");
 const popup = document.getElementById("popup");
 const popupMessage = document.getElementById("popupMessage");
 const popupClose = document.getElementById("popupClose");
+const hiddenInput = document.getElementById("candidate_name");
 
 function showPopup(text) {
     popupMessage.textContent = text;
@@ -20,56 +21,52 @@ popupClose.addEventListener("click", function() {
     popup.classList.remove("popup-visible");
 });
 
-function selectCandidate(card) {
-    const id = card.dataset.candidateId;
-    const name = card.dataset.candidateName;
-    candidateInput.value = name;
-    document.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-}
-
 samia.addEventListener("click", function() {
-    selectCandidate(samia);
     message.textContent = "Selected";
     message2.textContent = "";
+    hiddenInput.value = "samia s. hassan";
 });
 
 lisu.addEventListener("click", function() {
-    selectCandidate(lisu);
     message2.textContent = "Selected";
     message.textContent = "";
+    hiddenInput.value = "tundu a. lissu";
 });
 
+function validateInput(){
+    if(hiddenInput.value === ""){
+        return false;
+    }
+    return true;
+}
 form.addEventListener("submit", function(event) {
     event.preventDefault();
-    if (!candidateInput.value) {
-        showPopup("Please select a candidate before submitting the form.");
-        return;
-    }
-
-    const selectedCard = document.querySelector('.candidate-card.selected');
-    if (!selectedCard) {
-        showPopup("Please select a candidate.");
-        return;
-    }
-
-    const candidateId = selectedCard.dataset.candidateId;
-    const candidateName = selectedCard.dataset.candidateName;
-    const userID = userInput.value || null;
-
     // Send via fetch to Voting.php
-    fetch('/PHP/Voting.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ candidate_id: candidateId, candidate_name: candidateName, userID: userID })
-    }).then(res => res.json())
-      .then(data => {
-          if (data.success) {
-              showPopup('Vote recorded successfully');
-          } else {
-              showPopup('Error: ' + data.message);
-          }
-      }).catch(err => {
-          showPopup('Network error: ' + err.message);
-      });
+    if(!validateInput()){
+        showPopup("please select candidate!!!!");
+    }else{
+        const candidate_name = {
+            candidate_name: hiddenInput.value
+        };
+        fetch('/PHP/Voting.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(candidate_name)
+        }).then(res =>{
+            if(res.status === 200){
+                showPopup("Voter for "+hiddenInput.value+" is recorded");
+            }else if(res.status === 403){
+                showPopup("You have already vote");
+            }else if(res.status === 404){
+                showPopup("Candidate is not found");
+            }else if(res.status === 500){
+                showPopup("Database connectin failed");
+            }else{
+                showPopup("Server Error");
+            }
+        })
+        .catch(err => {
+            showPopup('Network error: ' + err.message);
+        });
+    }
 });
