@@ -148,19 +148,25 @@ label{
     margin-bottom: 0;
 }
 #submitButton,#submitBtn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     font-size: clamp(16px, 2.4vw, 20px);
     width: 60%;
     max-width: 420px;
-    height: clamp(32px, 5vw, 34px);
+    height: clamp(42px, 5vw, 44px);
     border: none;
     border-radius: 10px;
     background-color: green;
-    color:white;
+    color: white;
     margin-bottom: 10px;
     margin-top: 10px;
     margin-left: auto;
     margin-right: auto;
     cursor: pointer;
+    transition: background-color 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+    position: relative;
 }
 #sex{
     display: flex;
@@ -172,11 +178,53 @@ label{
 }
 #submitButton:hover,#submitBtn:hover{
     background-color: rgb(18, 84, 4);
-    transition:background-color 0.3s  ;
 }
 #submitButton:disabled{
     opacity: 0.7;
     cursor: not-allowed;
+}
+#submitButton .spinner{
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.6);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: button-spin 0.8s linear infinite;
+}
+#submitButton.loading .spinner{
+    display: inline-block;
+}
+#submitButton.loading .button-text{
+    opacity: 0.9;
+}
+@keyframes button-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 820px) {
+    #container{
+        width: 95%;
+        margin: 0 auto;
+        padding: 18px 16px;
+    }
+    .input_icon_box{
+        width: 100%;
+    }
+    #submitButton,#submitBtn{
+        width: 100%;
+        max-width: 100%;
+    }
+    #sex > div{
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+    #sex{
+        align-items: flex-start;
+    }
 }
 #form_message{
     position: fixed;
@@ -241,6 +289,15 @@ a:hover{
     top: 10px;
     width: 250px;
     border-radius: 5px;
+    padding: 12px 14px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+}
+#resultMessage.result-visible{
+    opacity: 1;
+    transform: translateY(0);
 }
 #body{
     margin-top: 20px;

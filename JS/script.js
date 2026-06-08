@@ -18,7 +18,9 @@ const phoneSpan = document.getElementById("phone_error");
 const emailSpan = document.getElementById("email_error");
 const passSpan = document.getElementById("pass_error");
 const confirmSpan = document.getElementById("confirm_error");
-
+let submitLoadingTimer = null;
+let submitLoadingStart = 0;
+const MIN_LOADING_TIME = 800;
 
 form.addEventListener("submit",function(event){
     event.preventDefault();
@@ -32,19 +34,7 @@ form.addEventListener("submit",function(event){
     const isConfirmPasswordValid = validateConfirmPassword();
 
     if(isLastNameValid && isFirstNameValid && isSexValid && isPhoneNumberValid && isEmailValid && isPasswordValid && isConfirmPasswordValid){
-        submit.value = "Creating...";
-        result.style.background = "green";
-        result.style.color="white";
-        setTimeout(function(){
-            result.textContent = "";
-            submit.value = "Submit";
-            result.textContent = "";
-            firstName.textContent = "";
-            lastName.textContent = "";
-            email.textContent = "";
-            password.textContent = "";
-
-        },3000);
+        setSubmitLoading(true);
         let my_sex = "";
         if(maleRadio.checked){
             my_sex = "male";
@@ -59,25 +49,72 @@ form.addEventListener("submit",function(event){
             email:email.value,
             password: password.value
         }
-         fetch('/PHP/create_account.php', {
+        fetch('/PHP/create_account.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
-        }).then(res =>{
-            if(res.status === 200){
-                 result.textContent = "Account created successfully";
-            }else if(res.status === 403){
-                result.textContent = "please fill all fields";
+        }).then(async res =>{
+            const payload = await res.json().catch(() => null);
+            const message = payload && (payload.message || payload.error)
+                ? (payload.message || payload.error)
+                : (res.status === 201 ? "Account created successfully" : "Server Error");
+            if(res.status === 201){
+                showResultMessage(message, "green", 3000);
+                form.reset();
             }else{
-                result.textContent = "Server Error";
+                showResultMessage(message, "red", 3000);
             }
         })
         .catch(err => {
-            result.textContent ='Network error: ' + err.message;
+            showResultMessage('Network error: ' + err.message, 'darkred', 3000);
+        })
+        .finally(() => {
+            setSubmitLoading(false);
         });
-        form.submit();
     }
 });
+
+function showResultMessage(text, background, duration = 3000) {
+    result.textContent = text;
+    result.style.background = background;
+    result.style.color = "white";
+    result.classList.remove("fade-out");
+    result.classList.add("result-visible");
+    clearTimeout(result.fadeTimer);
+    clearTimeout(result.clearTimer);
+    result.fadeTimer = setTimeout(() => {
+        result.classList.add("fade-out");
+    }, duration - 400);
+    result.clearTimer = setTimeout(() => {
+        result.classList.remove("result-visible", "fade-out");
+        result.textContent = "";
+    }, duration);
+}
+
+function setSubmitLoading(isLoading) {
+    if (submitLoadingTimer) {
+        clearTimeout(submitLoadingTimer);
+        submitLoadingTimer = null;
+    }
+
+    if (isLoading) {
+        submitLoadingStart = Date.now();
+        submit.classList.add('loading');
+        submit.disabled = true;
+        const label = submit.querySelector('.button-text');
+        if (label) label.textContent = 'Creating...';
+    } else {
+        const elapsed = Date.now() - submitLoadingStart;
+        const delay = Math.max(0, MIN_LOADING_TIME - elapsed);
+        submitLoadingTimer = setTimeout(() => {
+            submit.classList.remove('loading');
+            submit.disabled = false;
+            const label = submit.querySelector('.button-text');
+            if (label) label.textContent = 'Submit';
+            submitLoadingTimer = null;
+        }, delay);
+    }
+}
     firstName.addEventListener("input", function(){
         firstSpan.textContent = "";
     });
@@ -233,4 +270,3 @@ form.addEventListener("submit",function(event){
         }
     }
     }
-

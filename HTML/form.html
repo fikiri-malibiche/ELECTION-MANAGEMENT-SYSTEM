@@ -20,7 +20,8 @@
                         <img src="/IMAGES/name4.png" alt class="input_icon">
                         <input type="text" id="first_name_field"
                             placeholder="Enter first name"
-                            name="first_name"><br>
+                            name="first_name"
+                            autocomplete="given-name"><br>
                     </div>
                     <div><label id="first_name_error"></label></div>
                 </div>
@@ -28,16 +29,17 @@
                     <div id="myLastName" class="input_icon_box">
                         <img src="/IMAGES/name4.png" alt class="input_icon">
                         <input type="text" id="last_name_field" name="last_name"
-                            placeholder="Enter last name"><br>
+                            placeholder="Enter last name"
+                            autocomplete="family-name"><br>
                     </div>
                     <div><label id="last_name_error"></label></div>
                 </div>
                 <div id="sex">
                     <div>
-                        <label for id="male_label">male</label>
+                        <label for="male_radio">male</label>
                         <input type="radio" name="sex" id="male_radio"
                             value="male">
-                        <label for id="female_label">female</label>
+                        <label for="female_radio">female</label>
                         <input type="radio" name="sex" id="female_radio"
                             value="female"><br>
                     </div>
@@ -49,7 +51,8 @@
                     <div class="input_icon_box">
                         <img src="/IMAGES/phone1.svg" alt class="input_icon">
                         <input type="text" id="phone_number" name="phone_number"
-                            placeholder="Enter phone number"><br>
+                            placeholder="Enter phone number"
+                            autocomplete="tel"><br>
                     </div>
                     <div><label id="phone_error"></label></div>
                 </div>
@@ -57,7 +60,8 @@
                     <div class="input_icon_box">
                         <img src="/IMAGES/email1.png" alt class="input_icon">
                         <input type="email" id="email" name="email"
-                            placeholder="example@gmail.com"><br>
+                            placeholder="example@gmail.com"
+                            autocomplete="email"><br>
                     </div>
                     <div><label id="email_error"></label></div>
                 </div>
@@ -65,7 +69,8 @@
                     <div class="input_icon_box">
                         <img src="/IMAGES/password.png" alt class="input_icon">
                         <input type="password" id="password_field"
-                            name="password" placeholder="Enter password">
+                            name="password" placeholder="Enter password"
+                            autocomplete="new-password">
                     </div>
                     <div><label for="message" id="pass_error"></label></div>
                 </div>
@@ -74,12 +79,16 @@
                         <img src="/IMAGES/password.png" alt class="input_icon">
                         <input type="password" id="confirm_field"
                             name="confirm_password"
-                            placeholder="Re-enter password">
+                            placeholder="Re-enter password"
+                            autocomplete="new-password">
                     </div>
                     <div><label for="message" id="confirm_error"></label></div>
                 </div>
                 <div id="submitContainer">
-                    <input type="submit" value="submit" name id="submitButton">
+                    <button type="submit" id="submitButton">
+                        <span class="button-text">Submit</span>
+                        <span class="spinner" aria-hidden="true"></span>
+                    </button>
                 </div>
                 <div id="account">
                     <label for="account">Already have account?</label>
