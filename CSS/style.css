@@ -6,11 +6,10 @@ body{
     text-align: center;
     margin-top: 0;
     margin: 0;
-    background-color: rgba(28, 36, 40, 0.971);
     padding: clamp(8px, 2vw, 20px);
 }
 #container{
-    background-color:white;
+    background: linear-gradient(180deg, #ffffff 0%, #f7f8fb 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -18,8 +17,10 @@ body{
     width: 60%;
     margin-right: auto;
     margin-left: auto;
-    border-radius: 10px;
-    box-shadow: 3px 3px 3px rgba(144, 144, 158, 0.6);
+    padding: 36px 32px;
+    border-radius: 16px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(31, 45, 61, 0.08);
     box-sizing: border-box;
     transition: opacity 0.4s ease, transform 0.7s ease;
 }
@@ -270,6 +271,40 @@ label{
 #first_name_field:hover,#last_name_field:hover,#phone_number:hover,#email:hover,#password_field:hover,#username_field:hover,#confirm_field:hover{
     background-color: #ccc;
     transition: background-color 0.15s;
+}
+.footer-links{
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 20px auto;
+    font-size: clamp(13px, 1.8vw, 15px);
+}
+.admin-link.top-right{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 10px;
+    padding: 10px 14px;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+    z-index: 10;
+}
+body{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-align: center;
+    margin-top: 0;
+    margin: 0;
+    padding: clamp(8px, 2vw, 20px);
+    position: relative;
+}
+.footer-links a{
+    color: #0077cc;
+    font-weight: 600;
+}
+.footer-links a:hover{
+    opacity: 0.85;
 }
 #linkDiv,#link{
     margin-bottom: 15px;

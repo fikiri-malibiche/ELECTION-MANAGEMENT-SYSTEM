@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+</head>
+<body id="body">
+    <form id="admin_login_form" novalidate>
+        <div id="container">
+            <div>
+                <h2>ADMIN LOGIN</h2>
+            </div>
+            <div id="usercontainer">
+                <div class="input_icon_box">
+                    <img src="../IMAGES/username.png" alt class="input_icon">
+                    <input type="text" id="userid" name="username" autocomplete="username" placeholder="Enter admin username">
+                </div>
+                <div>
+                    <label for="message" id="user_error"></label>
+                </div>
+            </div>
+            <div id="passwordcontainer">
+                <div class="input_icon_box">
+                    <img src="../IMAGES/password.png" alt class="input_icon">
+                    <input type="password" name="password" id="passwordid" placeholder="Enter password">
+                </div>
+                <div>
+                    <label for="message" id="pass_error"></label>
+                </div>
+            </div>
+            <div id="messageContainer">
+                <label id="message"></label>
+            </div>
+            <div id="submitContainer">
+                <button type="button" id="submitBtn">Login</button>
+            </div>
+            <div id="link">
+                <label id="registerlabel">Not an admin?</label>
+                <a href="loginForm.html" id="registerlink">Voter login</a>
+            </div>
+        </div>
+    </form>
+    <script src="../JS/adminLogin.js"></script>
+</body>
+</html>
