@@ -9,10 +9,9 @@ body{
     padding: clamp(8px, 2vw, 20px);
 }
 #container{
-    background: linear-gradient(180deg, #ffffff 0%, #f7f8fb 100%);
+    background: linear-gradient(180deg, #3fd4dc 0%, #67d1db 100%);
     display: flex;
     flex-direction: column;
-    justify-content: center;
     max-width: 760px;
     width: 60%;
     margin-right: auto;
