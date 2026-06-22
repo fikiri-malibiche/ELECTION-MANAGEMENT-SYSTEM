@@ -1,272 +1,217 @@
-const form = document.getElementById("form");
-const firstName = document.getElementById("first_name_field");
-const lastName = document.getElementById("last_name_field");
-const maleRadio = document.getElementById("male_radio");
-const femaleRadio = document.getElementById("female_radio");
-const phoneNumber = document.getElementById("phone_number");
-const email = document.getElementById("email");
-const password = document.getElementById("password_field");
-const confirmPassword = document.getElementById("confirm_field");
-const submit = document.getElementById("submitButton");
-const result = document.getElementById("resultMessage");
-const label = document.getElementsByTagName("h3");
-//spans
-const firstSpan = document.getElementById("first_name_error");
-const lastSpan = document.getElementById("last_name_error");
-const sexSpan = document.getElementById("sex_error");
-const phoneSpan = document.getElementById("phone_error");
-const emailSpan = document.getElementById("email_error");
-const passSpan = document.getElementById("pass_error");
-const confirmSpan = document.getElementById("confirm_error");
-let submitLoadingTimer = null;
-let submitLoadingStart = 0;
-const MIN_LOADING_TIME = 800;
+// =============================================
+// SCRIPT.JS - USER REGISTRATION VALIDATION
+// =============================================
 
-form.addEventListener("submit",function(event){
-    event.preventDefault();
+document.addEventListener('DOMContentLoaded', function() {
 
-    const isLastNameValid = validateLastName();
-    const isFirstNameValid = validateFirstName();
-    const isSexValid = validateSex();
-    const isPhoneNumberValid = validatePhoneNumber();
-    const isEmailValid = validateEmail();
-    const isPasswordValid = validatePassword();
-    const isConfirmPasswordValid = validateConfirmPassword();
+    const form = document.getElementById('registerForm');
+    const submitBtn = document.getElementById('submitButton');
 
-    if(isLastNameValid && isFirstNameValid && isSexValid && isPhoneNumberValid && isEmailValid && isPasswordValid && isConfirmPasswordValid){
-        setSubmitLoading(true);
-        let my_sex = "";
-        if(maleRadio.checked){
-            my_sex = "male";
-        }else if(femaleRadio.checked){
-            my_sex = "female";
+    // =============================================
+    // ONYESHA MESSAGE KUTOKA PHP (KAMA IPO)
+    // =============================================
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const successMsg = urlParams.get('success');
+    const errorMsg = urlParams.get('error');
+
+    if (successMsg) {
+        showMessage(decodeURIComponent(successMsg), 'success');
+        // Ondoa parameter kutoka URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    if (errorMsg) {
+        showMessage(decodeURIComponent(errorMsg), 'error');
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // =============================================
+    // FORM SUBMISSION
+    // =============================================
+
+    form.addEventListener('submit', function(e) {
+        // Fanya validation kabla ya kutuma
+        let isValid = true;
+
+        // Clear old errors
+        clearErrors();
+        removeErrorStyles();
+
+        // 1. FIRST NAME
+        const firstName = document.getElementById('first_name_field');
+        if (firstName.value.trim() === '') {
+            showFieldError('first_name_error', 'Tafadhali ingiza jina la kwanza');
+            setErrorStyle(firstName);
+            isValid = false;
         }
-        const data = {
-            first_name:firstName.value,
-            last_name:lastName.value,
-            sex: my_sex,
-            phone_number: phoneNumber.value,
-            email:email.value,
-            password: password.value
+
+        // 2. LAST NAME
+        const lastName = document.getElementById('last_name_field');
+        if (lastName.value.trim() === '') {
+            showFieldError('last_name_error', 'Tafadhali ingiza jina la mwisho');
+            setErrorStyle(lastName);
+            isValid = false;
         }
-        fetch('/PHP/create_account.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(async res =>{
-            const payload = await res.json().catch(() => null);
-            const message = payload && (payload.message || payload.error)
-                ? (payload.message || payload.error)
-                : (res.status === 201 ? "Account created successfully" : "Server Error");
-            if(res.status === 201){
-                showResultMessage(message, "green", 3000);
-                form.reset();
-            }else{
-                showResultMessage(message, "red", 3000);
+
+        // 3. SEX (Imechaguliwa default, so no need to check)
+
+        // 4. PHONE
+        const phone = document.getElementById('phone_number');
+        const phoneRegex = /^[0-9]{10,15}$/;
+        if (phone.value.trim() === '') {
+            showFieldError('phone_error', 'Tafadhali ingiza namba ya simu');
+            setErrorStyle(phone);
+            isValid = false;
+        } else if (!phoneRegex.test(phone.value.trim())) {
+            showFieldError('phone_error', 'Namba ya simu si sahihi (namba 10-15)');
+            setErrorStyle(phone);
+            isValid = false;
+        }
+
+        // 5. EMAIL
+        const email = document.getElementById('email');
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (email.value.trim() === '') {
+            showFieldError('email_error', 'Tafadhali ingiza barua pepe');
+            setErrorStyle(email);
+            isValid = false;
+        } else if (!emailRegex.test(email.value.trim())) {
+            showFieldError('email_error', 'Barua pepe si sahihi (mfano: example@gmail.com)');
+            setErrorStyle(email);
+            isValid = false;
+        }
+
+        // 6. PASSWORD
+        const password = document.getElementById('password_field');
+        if (password.value.trim() === '') {
+            showFieldError('pass_error', 'Tafadhali ingiza password');
+            setErrorStyle(password);
+            isValid = false;
+        } else if (password.value.trim().length < 6) {
+            showFieldError('pass_error', 'Password lazima iwe angalau herufi 6');
+            setErrorStyle(password);
+            isValid = false;
+        }
+
+        // 7. CONFIRM PASSWORD
+        const confirm = document.getElementById('confirm_field');
+        if (confirm.value.trim() === '') {
+            showFieldError('confirm_error', 'Tafadhali re-enter password');
+            setErrorStyle(confirm);
+            isValid = false;
+        } else if (password.value.trim() !== confirm.value.trim()) {
+            showFieldError('confirm_error', 'Password hazifanani');
+            setErrorStyle(confirm);
+            isValid = false;
+        }
+
+        // Kama form si valid, zuia submission
+        if (!isValid) {
+            e.preventDefault();
+            // Scroll to top ili kuona errors
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
+        // Kama valid, onyesha spinner
+        submitBtn.classList.add('loading');
+        submitBtn.querySelector('.button-text').textContent = 'Processing...';
+    });
+
+    // =============================================
+    // REMOVE ERRORS ON INPUT
+    // =============================================
+
+    // Clear error when user types
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', function() {
+            // Remove error style
+            this.closest('.input_icon_box')?.classList.remove('error');
+            // Clear error message
+            const errorId = this.id.replace('_field', '').replace('_number', '');
+            const errorMap = {
+                'first_name': 'first_name_error',
+                'last_name': 'last_name_error',
+                'phone_number': 'phone_error',
+                'email': 'email_error',
+                'password': 'pass_error',
+                'confirm': 'confirm_error'
+            };
+            const errorLabel = document.getElementById(errorMap[this.id] || this.id + '_error');
+            if (errorLabel) {
+                errorLabel.textContent = '';
             }
-        })
-        .catch(err => {
-            showResultMessage('Network error: ' + err.message, 'darkred', 3000);
-        })
-        .finally(() => {
-            setSubmitLoading(false);
+        });
+
+        input.addEventListener('blur', function() {
+            this.closest('.input_icon_box')?.classList.remove('error');
+        });
+    });
+
+    // =============================================
+    // HELPER FUNCTIONS
+    // =============================================
+
+    function showFieldError(elementId, message) {
+        const errorLabel = document.getElementById(elementId);
+        if (errorLabel) {
+            errorLabel.textContent = message;
+            errorLabel.style.color = '#dc3545';
+        }
+    }
+
+    function setErrorStyle(input) {
+        const box = input.closest('.input_icon_box');
+        if (box) {
+            box.classList.add('error');
+        }
+    }
+
+    function removeErrorStyles() {
+        document.querySelectorAll('.input_icon_box.error').forEach(el => {
+            el.classList.remove('error');
         });
     }
+
+    function clearErrors() {
+        document.querySelectorAll('.error-label').forEach(label => {
+            label.textContent = '';
+        });
+    }
+
+    // =============================================
+    // SHOW MESSAGE FUNCTION
+    // =============================================
+
+    function showMessage(message, type) {
+        const resultDiv = document.getElementById('resultMessage');
+        const contentDiv = document.getElementById('messageContent');
+
+        if (!resultDiv || !contentDiv) return;
+
+        // Remove previous classes
+        resultDiv.className = '';
+        resultDiv.classList.add(type);
+
+        // Set message
+        contentDiv.innerHTML = message;
+
+        // Add close button
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'close-btn';
+        closeBtn.innerHTML = '×';
+        closeBtn.onclick = function() {
+            resultDiv.style.display = 'none';
+        };
+        resultDiv.appendChild(closeBtn);
+
+        // Show
+        resultDiv.style.display = 'block';
+
+        // Auto-hide after 5 seconds
+        setTimeout(function() {
+            resultDiv.style.display = 'none';
+        }, 5000);
+    }
 });
-
-function showResultMessage(text, background, duration = 3000) {
-    result.textContent = text;
-    result.style.background = background;
-    result.style.color = "white";
-    result.classList.remove("fade-out");
-    result.classList.add("result-visible");
-    clearTimeout(result.fadeTimer);
-    clearTimeout(result.clearTimer);
-    result.fadeTimer = setTimeout(() => {
-        result.classList.add("fade-out");
-    }, duration - 400);
-    result.clearTimer = setTimeout(() => {
-        result.classList.remove("result-visible", "fade-out");
-        result.textContent = "";
-    }, duration);
-}
-
-function setSubmitLoading(isLoading) {
-    if (submitLoadingTimer) {
-        clearTimeout(submitLoadingTimer);
-        submitLoadingTimer = null;
-    }
-
-    if (isLoading) {
-        submitLoadingStart = Date.now();
-        submit.classList.add('loading');
-        submit.disabled = true;
-        const label = submit.querySelector('.button-text');
-        if (label) label.textContent = 'Creating...';
-    } else {
-        const elapsed = Date.now() - submitLoadingStart;
-        const delay = Math.max(0, MIN_LOADING_TIME - elapsed);
-        submitLoadingTimer = setTimeout(() => {
-            submit.classList.remove('loading');
-            submit.disabled = false;
-            const label = submit.querySelector('.button-text');
-            if (label) label.textContent = 'Submit';
-            submitLoadingTimer = null;
-        }, delay);
-    }
-}
-    firstName.addEventListener("input", function(){
-        firstSpan.textContent = "";
-    });
-        lastName.addEventListener("input", function(){
-        lastSpan.textContent = "";
-    });
-    maleRadio.addEventListener("change", function(){
-        sexSpan.textContent = "";
-    });  
-    femaleRadio.addEventListener("change", function(){
-        sexSpan.textContent = "";
-    });
-    email.addEventListener("input", function(){
-        if(email.value === "" || /^[a-zA-Z0-9._%+-]{3,}@gmail\.com$/.test(email.value)){
-            emailSpan.textContent = "";
-        }else{
-            emailSpan.textContent = "Email should be a valid Gmail address";
-            emailSpan.style.color = "red";
-        }
-    });
-    phoneNumber.addEventListener("input", function(){
-        phoneSpan.textContent = "";
-    });
-    password.addEventListener("input",function(){
-        if(password.value === "" || /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(password.value)){
-            passSpan.textContent = "";
-        }else{
-            passSpan.textContent = "Password needs 8 characters, 1 uppercase letter, 1 number, and 1 special symbol";
-            passSpan.style.color = "red";
-        }
-    });
-    confirmPassword.addEventListener("input",function(){
-        confirmSpan.textContent = "";
-    });
-//validate names
-    function validateLastName() {
-    let namePattern = "^[a-zA-Z]{3,}$";
-    const regex = new RegExp(namePattern);
-    if(lastName.value === ""){
-        lastSpan.textContent = "Last name is required";
-        lastSpan.style.color = "red";
-        return false;
-    } else{
-        if(regex.test(lastName.value)){
-            return true;
-        } else {
-            lastSpan.textContent = "Invalid last name";
-            lastSpan.style.color = "red";
-            return false;
-     }
-    }
-   }
-
-    function validateFirstName() {
-    let namePattern = "^[a-zA-Z]{3,}$";
-    const regex = new RegExp(namePattern);
-    if(firstName.value === ""){
-        firstSpan.textContent = "First name is required";
-        firstSpan.style.color = "red";
-        return false;
-    } else{
-        if(regex.test(firstName.value)){
-        return true;
-    } else {
-        firstSpan.textContent = "Invalid first name";
-        firstSpan.style.color = "red";
-        return false;
-        }
-    }
-   }
-
-    function validateSex() {
-    if(maleRadio.checked || femaleRadio.checked){
-        return true;
-    }else {
-        sexSpan.textContent = "Please select a gender";
-        sexSpan.style.color = "red";
-        return false;
-    }
-   }
-
-    function validatePhoneNumber() {
-    let phoneNumberPattern = "^[0](61|62|63|65|67|68|69|71|72|73|74|75|76|78|79)[0-9]{7}$";
-    const regex = new RegExp(phoneNumberPattern);
-    if(phoneNumber.value === ""){
-        phoneSpan.textContent = "Phone number is required";
-        phoneSpan.style.color = "red";
-        return false;
-    } else {
-        if(regex.test(phoneNumber.value)){
-            return true;
-        } else {
-            phoneSpan.textContent = "Invalid phone number";
-            phoneSpan.style.color = "red";
-            return false;
-        }
-    }
-   }
-
-    function validateEmail() {
-    let emailPattern = "^[a-zA-Z0-9._%+-]{3,}@gmail\\.com$";
-    const regex = new RegExp(emailPattern);
-        if(email.value === ""){
-        emailSpan.textContent = "Email is required";
-        emailSpan.style.color = "red";
-        return false;
-    }else {
-        if(regex.test(email.value)){
-            return true;
-        } else {
-            emailSpan.textContent = "Invalid email address";
-            emailSpan.style.color = "red";
-            return false;
-        }
-    }
-   }
-    function validatePassword() {
-    let passPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$";
-    const regex = new RegExp(passPattern);
-    if(password.value === ""){
-        passSpan.textContent = "Password is required";
-        passSpan.style.color = "red";
-        return false;
-    } else{
-        if(regex.test(password.value)){
-        return true;
-    } else {
-            passSpan.textContent = "Password needs 8 characters, 1 uppercase letter, 1 number, and 1 special symbol";
-        passSpan.style.color = "red";
-        return false;
-        }
-    }
-    }
-
-    function validateConfirmPassword() {
-    if(confirmPassword.value === ""){
-        confirmSpan.textContent = "This field is required";
-        confirmSpan.style.color = "red";
-        return false;
-    } else{
-        if(confirmPassword.value === password.value){
-        return true;
-    } else {
-        if(password.value === ""){
-            confirmSpan.textContent = "please enter password first";
-            confirmSpan.style.color = "red";
-            return false;
-        }else{
-            confirmSpan.textContent = "Confirmed password do not match entered password";
-            confirmSpan.style.color = "red";
-            return false;
-            }
-        }
-    }
-    }

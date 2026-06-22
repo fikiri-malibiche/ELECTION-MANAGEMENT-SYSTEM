@@ -1,106 +1,333 @@
-const loginForm = document.getElementById("login_form");
-const submitBtn = document.getElementById("submitBtn");
+// =============================================
+// LOGIN.JS - Toleo la Fetch API (Inafuata Redirect)
+// =============================================
 
-function showMessage(text, isSuccess) {
-  const messageLabel = document.getElementById("message");
-  messageLabel.textContent = text;
-  messageLabel.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336";
-  messageLabel.style.color = "white";
-  messageLabel.classList.add("show");
-  // auto-hide after 2s
-  if (messageLabel._hideTimeout) clearTimeout(messageLabel._hideTimeout);
-  messageLabel._hideTimeout = setTimeout(() => {
-    messageLabel.classList.remove("show");
-  }, 2000);
-}
+document.addEventListener('DOMContentLoaded', function() {
 
-function clearMessages() {
-  const userError = document.getElementById("user_error");
-  const passError = document.getElementById("pass_error");
-  const messageLabel = document.getElementById("message");
-  userError.textContent = "";
-  passError.textContent = "";
-  messageLabel.textContent = "";
-  messageLabel.classList.remove("show");
-}
+    console.log('🔍 Login page loaded!');
 
-function handleLogin() {
-  clearMessages();
-  const user = document.getElementById("userid").value;
-  const pass = document.getElementById("passwordid").value;
-  const userError = document.getElementById("user_error");
-  const passError = document.getElementById("pass_error");
+    // =============================================
+    // GET ELEMENTS
+    // =============================================
 
-  // Client-side validation
-  let hasError = false;
-  if (user === "") {
-    userError.textContent = "Username is required";
-    userError.style.color = "red";
-    hasError = true;
-  }
-  if (pass === "") {
-    passError.textContent = "Password is required";
-    passError.style.color = "red";
-    hasError = true;
-  }
-  if (hasError) return;
+    const loginForm = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const generalError = document.getElementById('general_error');
 
-  // Send login request via Fetch API as JSON
-  const loginData = { email: user, 
-                      password: pass 
-                    };
-  fetch("../PHP/login_form.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(loginData),
-  })
-    .then((response) => response.text())
-    .then((text) => {
-      try {
-        const data = JSON.parse(text);
-        if (data && data.success) {
-          showMessage(data.message, true);
-          // keep message visible until redirect
-          const msgEl = document.getElementById("message");
-          if (msgEl && msgEl._hideTimeout) clearTimeout(msgEl._hideTimeout);
+    // =============================================
+    // CHECK IF FORM EXISTS
+    // =============================================
 
-          const delayBeforeFade = 1500;
-          const fadeDuration = 400;
-          const container = document.getElementById("container");
-          setTimeout(() => {
-            if (container) {
-              container.classList.add("fade-out");
-            }
-          }, delayBeforeFade);
-          // redirect after fade completes
-          setTimeout(() => {
-            window.location.href = data.redirect;
-          }, delayBeforeFade + fadeDuration);
+    if (!loginForm) {
+        console.error('❌ Login form not found!');
+        return;
+    }
+
+    console.log('✅ Login form found!');
+
+    // =============================================
+    // SHOW MESSAGE FUNCTION
+    // =============================================
+
+    function showMessage(message, type = 'error') {
+        console.log('📢 Message:', message, 'Type:', type);
+
+        const msgDiv = document.getElementById('resultMessage');
+        const contentDiv = document.getElementById('messageContent');
+
+        if (msgDiv && contentDiv) {
+            msgDiv.className = '';
+            msgDiv.classList.add(type);
+            contentDiv.innerHTML = message;
+            msgDiv.style.display = 'block';
+
+            clearTimeout(msgDiv._timeout);
+            msgDiv._timeout = setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 5000);
         } else {
-          const msg =
-            data && data.message ? data.message : "Invalid response from server";
-          showMessage(msg, false);
+            alert(message);
         }
-      } catch (parseError) {
-        console.error("Login response text:", text);
-        throw new Error("Invalid JSON response from server");
-      }
-    })
-    .catch((error) => {
-      showMessage("Error: " + (error.message || "Network error"), false);
+    }
+
+    // =============================================
+    // SHOW FIELD ERROR
+    // =============================================
+
+    function showFieldError(elementId, message) {
+        const errorLabel = document.getElementById(elementId);
+        if (errorLabel) {
+            errorLabel.textContent = message;
+            errorLabel.style.color = '#dc3545';
+        }
+    }
+
+    function clearFieldErrors() {
+        document.querySelectorAll('.error-label').forEach(el => {
+            el.textContent = '';
+        });
+        document.querySelectorAll('.input_icon_box.error').forEach(el => {
+            el.classList.remove('error');
+        });
+        if (generalError) {
+            generalError.textContent = '';
+            generalError.className = 'error-label';
+        }
+    }
+
+    function setErrorStyle(input) {
+        const box = input.closest('.input_icon_box');
+        if (box) {
+            box.classList.add('error');
+        }
+    }
+
+    // =============================================
+    // VALIDATE FORM
+    // =============================================
+
+    function validateForm() {
+        let isValid = true;
+        clearFieldErrors();
+
+        const email = emailInput.value.trim();
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        if (email === '') {
+            showFieldError('email_error', 'Tafadhali ingiza barua pepe');
+            setErrorStyle(emailInput);
+            isValid = false;
+        } else if (!emailRegex.test(email)) {
+            showFieldError('email_error', 'Barua pepe si sahihi');
+            setErrorStyle(emailInput);
+            isValid = false;
+        }
+
+        const password = passwordInput.value.trim();
+        if (password === '') {
+            showFieldError('pass_error', 'Tafadhali ingiza password');
+            setErrorStyle(passwordInput);
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    // =============================================
+    // RESET BUTTON
+    // =============================================
+
+    function resetButton() {
+        submitBtn.classList.remove('loading');
+        submitBtn.querySelector('.button-text').textContent = '🔓 Login';
+        submitBtn.disabled = false;
+    }
+
+    // =============================================
+    // FORM SUBMISSION - FETCH API
+    // =============================================
+
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        console.log('🔄 Login form submitted!');
+
+        if (!validateForm()) {
+            console.log('❌ Validation failed');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        console.log('📧 Email:', email);
+        console.log('🔒 Password:', password ? '******' : 'Empty');
+
+        submitBtn.classList.add('loading');
+        submitBtn.querySelector('.button-text').textContent = 'Logging in...';
+        submitBtn.disabled = true;
+
+        // =============================================
+        // SEND REQUEST WITH FETCH API
+        // =============================================
+
+        const url = '../PHP/login.php';
+        console.log('🚀 Sending request to:', url);
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                email: email,
+                password: password,
+                origin: 'user'
+            })
+        })
+        .then(response => {
+            console.log('📥 Response received!');
+            console.log('📊 Status:', response.status);
+            console.log('📊 Content-Type:', response.headers.get('content-type'));
+
+            // =============================================
+            // CHECK IF RESPONSE IS JSON
+            // =============================================
+
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            } else {
+                // If not JSON, return text for debugging
+                return response.text().then(text => {
+                    console.error('❌ Expected JSON but got HTML/text');
+                    console.error('📄 Response:', text.substring(0, 500));
+                    throw new Error('Server returned non-JSON response');
+                });
+            }
+        })
+        .then(data => {
+            console.log('📊 Response data:', data);
+
+            // =============================================
+            // HANDLE ERRORS
+            // =============================================
+
+            if (!data.success) {
+                console.error('❌ Login failed:', data.error || data.errors);
+                
+                // Show general error
+                if (data.error) {
+                    showMessage(data.error, 'error');
+                }
+                
+                // Show field errors
+                if (data.errors) {
+                    if (data.errors.email) {
+                        showFieldError('email_error', data.errors.email);
+                        setErrorStyle(emailInput);
+                    }
+                    if (data.errors.password) {
+                        showFieldError('pass_error', data.errors.password);
+                        setErrorStyle(passwordInput);
+                    }
+                }
+                
+                resetButton();
+                return;
+            }
+
+            // =============================================
+            // SUCCESS - FOLLOW REDIRECT
+            // =============================================
+
+            console.log('✅ Login successful!');
+            console.log('👤 User:', data.user);
+            console.log('🔄 Redirecting to:', data.redirect);
+
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                // Fallback redirect based on role
+                const role = data.user?.role || 'voter';
+                const redirectMap = {
+                    'admin': '../HTML/admin_dashboard.html',
+                    'manager': '../HTML/manager_dashboard.html',
+                    'voter': '../HTML/voter_dashboard.html'
+                };
+                window.location.href = redirectMap[role] || redirectMap['voter'];
+            }
+
+        })
+        .catch(error => {
+            console.error('❌ Fetch error:', error);
+            console.error('❌ Error message:', error.message);
+            
+            showMessage('🚫 Kuna hitilafu kwenye mfumo. Tafadhali jaribu tena.', 'error');
+            resetButton();
+        });
     });
-}
 
-// Attach handlers
-if (submitBtn) {
-  submitBtn.addEventListener("click", handleLogin);
-}
-if (loginForm) {
-  // prevent accidental native submit if Enter is pressed inside inputs
-  loginForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    submitBtn.disabled = true;
-    handleLogin();
-  });
-}
+    // =============================================
+    // CLEAR ERRORS ON INPUT
+    // =============================================
 
+    emailInput.addEventListener('input', function() {
+        this.closest('.input_icon_box')?.classList.remove('error');
+        document.getElementById('email_error').textContent = '';
+        if (generalError) {
+            generalError.textContent = '';
+            generalError.className = 'error-label';
+        }
+    });
+
+    passwordInput.addEventListener('input', function() {
+        this.closest('.input_icon_box')?.classList.remove('error');
+        document.getElementById('pass_error').textContent = '';
+        if (generalError) {
+            generalError.textContent = '';
+            generalError.className = 'error-label';
+        }
+    });
+
+    // =============================================
+    // PASSWORD TOGGLE
+    // =============================================
+
+    const passwordContainer = passwordInput?.closest('.input_icon_box');
+    if (passwordContainer && passwordInput) {
+        const toggle = document.createElement('span');
+        toggle.className = 'password-toggle';
+        toggle.textContent = '👁️';
+        toggle.title = 'Show/Hide password';
+        toggle.style.cssText = `
+            cursor: pointer;
+            padding: 0 10px;
+            font-size: 18px;
+            user-select: none;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        `;
+        toggle.onmouseover = () => toggle.style.opacity = '1';
+        toggle.onmouseout = () => toggle.style.opacity = '0.5';
+
+        toggle.addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggle.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggle.textContent = '👁️';
+            }
+        });
+
+        passwordContainer.appendChild(toggle);
+        console.log('✅ Password toggle added');
+    }
+
+    // =============================================
+    // CHECK URL PARAMETERS
+    // =============================================
+
+    function checkURLParams() {
+        const params = new URLSearchParams(window.location.search);
+        console.log('🔍 URL Parameters:');
+        params.forEach((value, key) => {
+            console.log(`  ${key}: ${value}`);
+        });
+
+        if (params.has('error')) {
+            showMessage(decodeURIComponent(params.get('error')), 'error');
+        }
+        if (params.has('success')) {
+            showMessage(decodeURIComponent(params.get('success')), 'success');
+        }
+    }
+    checkURLParams();
+
+    console.log('✅ Login.js loaded successfully!');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+});
