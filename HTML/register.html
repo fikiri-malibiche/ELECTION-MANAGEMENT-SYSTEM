@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Mfumo wa Uchaguzi</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+</head>
+<body>
+
+    <!-- Result Message (Ipo juu ya form) -->
+    <div id="resultMessage" style="display: none;">
+        <div id="messageContent"></div>
+    </div>
+
+    <!-- Registration Form -->
+    <form id="registerForm" method="POST" action="../PHP/register.php" novalidate>
+        <div id="container">
+
+            <!-- Header -->
+            <div id="header">
+                <h2>📝 CREATE USER ACCOUNT</h2>
+                <p class="subtitle">Jisajili kwenye Mfumo wa Uchaguzi</p>
+                <p class="info-text">⏳ Baada ya kujisajili, akaunti yako itakaguliwa na Admin</p>
+            </div>
+
+            <!-- FIRST NAME -->
+            <div id="firstname">
+                <div id="myFirstName" class="input_icon_box">
+                    <img src="../IMAGES/name4.png" alt="name icon" class="input_icon">
+                    <input type="text" id="first_name_field"
+                        placeholder="Enter first name"
+                        name="first_name"
+                        autocomplete="given-name"
+                        required>
+                </div>
+                <div><label id="first_name_error" class="error-label"></label></div>
+            </div>
+
+            <!-- LAST NAME -->
+            <div id="lastname">
+                <div id="myLastName" class="input_icon_box">
+                    <img src="../IMAGES/name4.png" alt="name icon" class="input_icon">
+                    <input type="text" id="last_name_field"
+                        name="last_name"
+                        placeholder="Enter last name"
+                        autocomplete="family-name"
+                        required>
+                </div>
+                <div><label id="last_name_error" class="error-label"></label></div>
+            </div>
+
+            <!-- SEX -->
+            <div id="sex">
+                <div class="sex-options">
+                    <label for="male_radio">👨 Male</label>
+                    <input type="radio" name="sex" id="male_radio" value="male" checked>
+                    <label for="female_radio">👩 Female</label>
+                    <input type="radio" name="sex" id="female_radio" value="female">
+                </div>
+                <div><label id="sex_error" class="error-label"></label></div>
+            </div>
+
+            <!-- CONTACT (PHONE) -->
+            <div id="contact">
+                <div class="input_icon_box">
+                    <img src="../IMAGES/phone1.svg" alt="phone icon" class="input_icon">
+                    <input type="text" id="phone_number"
+                        name="phone_number"
+                        placeholder="Enter phone number (e.g. 0712345678)"
+                        autocomplete="tel"
+                        required>
+                </div>
+                <div><label id="phone_error" class="error-label"></label></div>
+            </div>
+
+            <!-- EMAIL -->
+            <div id="email_address">
+                <div class="input_icon_box">
+                    <img src="../IMAGES/email1.png" alt="email icon" class="input_icon">
+                    <input type="email" id="email"
+                        name="email"
+                        placeholder="example@gmail.com"
+                        autocomplete="email"
+                        required>
+                </div>
+                <div><label id="email_error" class="error-label"></label></div>
+            </div>
+
+            <!-- PASSWORD -->
+            <div id="password">
+                <div class="input_icon_box">
+                    <img src="../IMAGES/password.png" alt="password icon" class="input_icon">
+                    <input type="password" id="password_field"
+                        name="password"
+                        placeholder="Enter password (min 6 characters)"
+                        autocomplete="new-password"
+                        required
+                        minlength="6">
+                </div>
+                <div><label id="pass_error" class="error-label"></label></div>
+            </div>
+
+            <!-- CONFIRM PASSWORD -->
+            <div id="confirm">
+                <div class="input_icon_box">
+                    <img src="../IMAGES/password.png" alt="confirm password icon" class="input_icon">
+                    <input type="password" id="confirm_field"
+                        name="confirm_password"
+                        placeholder="Re-enter password"
+                        autocomplete="new-password"
+                        required>
+                </div>
+                <div><label id="confirm_error" class="error-label"></label></div>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <div id="submitContainer">
+                <button type="submit" id="submitButton">
+                    <span class="button-text">✅ Register</span>
+                    <span class="spinner" aria-hidden="true"></span>
+                </button>
+            </div>
+
+            <!-- LOGIN LINK -->
+            <div id="account">
+                <label>Already have an account?</label>
+                <a href="login.html">Login Here</a>
+            </div>
+
+        </div>
+    </form>
+
+    <script src="../JS/script.js"></script>
+</body>
+</html>

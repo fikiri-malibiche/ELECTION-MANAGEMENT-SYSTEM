@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Candidate - Admin</title>
+    <link rel="stylesheet" href="../CSS/admin.css">
+</head>
+<body>
+    <div class="topbar">
+        <div class="topbar-left">
+            <h1>Admin Panel</h1>
+        </div>
+        <div class="topbar-right">
+            <a href="admin_dashboard.html" class="btn-back">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <section class="form-section">
+            <div class="section-header">
+                <div>
+                    <h3>➕ Add New Candidate</h3>
+                    <p>Fill in the candidate details and upload the required images.</p>
+                </div>
+            </div>
+            <div class="add-form active">
+                <h4>Add New Candidate</h4>
+                <form id="candidateForm" enctype="multipart/form-data">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" id="full_name" name="full_name" placeholder="e.g. Samia Suluhu Hassan" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Party *</label>
+                            <input type="text" id="party" name="party" placeholder="e.g. CCM" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Position *</label>
+                            <input type="text" id="position" name="position" placeholder="e.g. President" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Bio / Description</label>
+                            <textarea id="bio" name="bio" rows="4" placeholder="Maelezo kuhusu mgombea..."></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Upload Party Logo *</label>
+                            <input type="file" id="party_logo_file" name="party_logo_file" accept="image/*" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Upload Photo *</label>
+                            <input type="file" id="photo_file" name="photo_file" accept="image/*" required>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save" id="saveCandidateBtn">💾 Save Candidate</button>
+                        <a href="admin_dashboard.html" class="btn-cancel">❌ Cancel</a>
+                    </div>
+                    <div id="formMessage" class="form-message"></div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        window.CSRF_TOKEN = null;
+        (async function () {
+            try {
+                const res = await fetch('../PHP/api/csrf.php');
+                const data = await res.json();
+                if (data && data.success) {
+                    window.CSRF_TOKEN = data.csrf_token;
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <script src="../JS/admin_add_candidate.js"></script>
+</body>
+</html>

@@ -4,7 +4,13 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    console.log('🔍 Login page loaded!');
+    const DEBUG = false;
+
+    function dbgLog() { if (DEBUG) console.log.apply(console, arguments); }
+    function dbgErr() { if (DEBUG) console.error.apply(console, arguments); }
+
+
+
 
     // =============================================
     // GET ELEMENTS
@@ -25,14 +31,14 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    console.log('✅ Login form found!');
+
 
     // =============================================
     // SHOW MESSAGE FUNCTION
     // =============================================
 
     function showMessage(message, type = 'error') {
-        console.log('📢 Message:', message, 'Type:', type);
+
 
         const msgDiv = document.getElementById('resultMessage');
         const contentDiv = document.getElementById('messageContent');
@@ -40,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (msgDiv && contentDiv) {
             msgDiv.className = '';
             msgDiv.classList.add(type);
-            contentDiv.innerHTML = message;
+            contentDiv.textContent = message;
             msgDiv.style.display = 'block';
 
             clearTimeout(msgDiv._timeout);
@@ -132,10 +138,10 @@ document.addEventListener('DOMContentLoaded', function() {
     loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        console.log('🔄 Login form submitted!');
+        dbgLog('🔄 Login form submitted!');
 
         if (!validateForm()) {
-            console.log('❌ Validation failed');
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
         }

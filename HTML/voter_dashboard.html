@@ -1,0 +1,138 @@
+<!-- /HTML/voter_dashboard.html -->
+<?php
+session_start();
+
+if (!isset($_SESSION['is_logged_in']) || $_SESSION['is_logged_in'] !== true) {
+    header('Location: login.html');
+    exit();
+}
+
+if ($_SESSION['user_role'] !== 'voter') {
+    header('Location: no-access.html');
+    exit();
+}
+
+$user_name = $_SESSION['user_name'] ?? 'Voter';
+$user_first_name = $_SESSION['user_first_name'] ?? '';
+if (empty($user_first_name)) {
+    $name = trim($user_name);
+    $user_first_name = $name !== '' ? explode(' ', $name)[0] : 'Voter';
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voter Dashboard</title>
+    <link rel="stylesheet" href="../CSS/vote.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ===== TOP BAR ===== -->
+    <header class="topbar">
+        <div class="brand">
+            <span class="logo">🗳️</span>
+            <div>
+                <h1>Election System</h1>
+                <small>Mfumo wa Uchaguzi</small>
+            </div>
+        </div>
+        <div class="user-info">
+            <span class="user-name">👤 <?php echo htmlspecialchars($user_name); ?></span>
+            <span class="role-badge">🗳️ Voter</span>
+            <a href="../PHP/logout.php" class="logout-btn">🚪 Logout</a>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <script>
+        window.CSRF_TOKEN = null;
+        (async function () {
+            try {
+                const res = await fetch('../PHP/api/csrf.php');
+                const data = await res.json();
+                if (data && data.success) {
+                    window.CSRF_TOKEN = data.csrf_token;
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <main class="main-content">
+
+        <!-- Welcome -->
+        <section class="welcome-section">
+            <h2>👋 Karibu, <?php echo htmlspecialchars($user_first_name); ?></h2>
+            <p>Chagua mgombea wako na piga kura kwa siri.</p>
+            <div id="voteStatus" class="status-info not-voted">
+                ⏳ Loading...
+            </div>
+        </section>
+
+        <section class="report-section">
+            <div class="section-header">
+                <h3>🏆 Current Election Winner</h3>
+                <p class="section-subtitle">This report is generated automatically so you can see the current leader.</p>
+            </div>
+            <div class="winner-card" id="winnerContainer">
+                <p>Loading winner information...</p>
+            </div>
+        </section>
+
+        <!-- Quick Stats (removed voter count card as requested) -->
+
+        <!-- Candidates -->
+        <section class="candidates-section">
+            <h3>📋 Wagombea wa Urais</h3>
+            <p class="subtitle">Bonyeza kwenye mgombea ili kuchagua, kisha bonyeza "Piga Kura"</p>
+
+            <div id="candidatesContainer">
+                <p>Loading candidates...</p>
+            </div>
+
+            <!-- Submit Button -->
+            <div id="submitContainer">
+                <button type="button" id="submitBtn" disabled>
+                    <span class="btn-text">🗳️ Piga Kura</span>
+                    <span class="spinner"></span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== JAVASCRIPT (Controller) ===== -->
+    <script src="../JS/vote.js"></script>
+    <script src="../JS/dashboard.js"></script>
+
+    <!-- Vote confirmation modal -->
+    <div id="voteConfirmModal" class="modal" style="display:none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-card">
+            <h3>Thibitisha Kura</h3>
+            <div class="modal-body">
+                <div class="confirm-candidate">
+                    <img id="confirmCandidatePhoto" src="../IMAGES/default_avatar.png" alt="candidate" class="confirm-photo">
+                    <div>
+                        <div id="confirmCandidateName" class="confirm-name">Candidate Name</div>
+                        <div id="confirmCandidatePosition" class="confirm-position">Position</div>
+                    </div>
+                </div>
+                <p>Una uhakika unataka kumpigia kura huyu mgombea? Tafadhali thibitisha kwa kuingiza nenosiri lako.</p>
+                <div class="form-group">
+                    <label for="confirmPassword">Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Enter your password to confirm">
+                </div>
+                <div id="confirmError" class="error-label" style="display:none;margin-top:6px;"></div>
+            </div>
+            <div class="modal-actions">
+                <button id="confirmCancel" class="btn-cancel">Cancel</button>
+                <button id="confirmSubmit" class="btn-save">Confirm Vote</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

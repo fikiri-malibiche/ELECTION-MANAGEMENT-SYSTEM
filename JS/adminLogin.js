@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // =============================================
 
     function showMessage(message, type = 'error') {
-        console.log('📢 Message:', message, 'Type:', type);
+
 
         const msgDiv = document.getElementById('resultMessage');
         const contentDiv = document.getElementById('messageContent');
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (msgDiv && contentDiv) {
             msgDiv.className = '';
             msgDiv.classList.add(type);
-            contentDiv.innerHTML = message;
+            contentDiv.textContent = message;
             msgDiv.style.display = 'block';
 
             clearTimeout(msgDiv._timeout);
@@ -279,6 +279,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ Password toggle added');
     }
 
-    console.log('✅ adminLogin.js loaded successfully!');
+
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 });

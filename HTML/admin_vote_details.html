@@ -1,0 +1,77 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['is_logged_in']) || $_SESSION['is_logged_in'] !== true) {
+    header('Location: login.html');
+    exit();
+}
+
+if ($_SESSION['user_role'] !== 'admin') {
+    header('Location: no-access.html');
+    exit();
+}
+
+$user_name = $_SESSION['user_name'] ?? 'Admin';
+$user_first_name = $_SESSION['user_first_name'] ?? '';
+if (empty($user_first_name)) {
+    $name = trim($user_name);
+    $user_first_name = $name !== '' ? explode(' ', $name)[0] : 'Admin';
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Vote Details</title>
+    <link rel="stylesheet" href="../CSS/admin.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <span class="logo">🗳️</span>
+            <div>
+                <h1>Vote Details</h1>
+                <small>Review who voted for whom</small>
+            </div>
+        </div>
+        <div class="user-info">
+            <span class="user-name">👤 <?php echo htmlspecialchars($user_name); ?></span>
+            <span class="role-badge">🔐 Admin</span>
+            <a href="../PHP/logout.php" class="logout-btn">🚪 Logout</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="welcome-section">
+            <h2>👋 Karibu, <?php echo htmlspecialchars($user_first_name); ?></h2>
+            <p>Hapa unaweza kuona rekodi za kila kura iliyopigwa.</p>
+        </section>
+
+        <section class="vote-details-section">
+            <div class="section-header">
+                <h3>Vote History</h3>
+                <a href="admin_dashboard.html" class="btn-add">← Back to Dashboard</a>
+            </div>
+            <div class="vote-details-card">
+                <div id="voteDetailsContainer">Loading vote details...</div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        window.CSRF_TOKEN = null;
+        (async function () {
+            try {
+                const res = await fetch('../PHP/api/csrf.php');
+                const data = await res.json();
+                if (data && data.success) {
+                    window.CSRF_TOKEN = data.csrf_token;
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <script src="../JS/admin_vote_details.js"></script>
+</body>
+</html>

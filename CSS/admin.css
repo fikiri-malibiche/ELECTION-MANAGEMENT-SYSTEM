@@ -545,6 +545,49 @@ body {
 }
 
 /* =============================================
+   TOP-RIGHT POPUP TOAST (ADMIN)
+   ============================================= */
+
+.toast-popup {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    z-index: 20000;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #155724;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    display: none;
+    transform: translateX(30px);
+    opacity: 0;
+    animation: none;
+}
+
+.toast-popup.show {
+    display: block;
+    animation: toastSlideIn 0.4s ease forwards;
+}
+
+.toast-popup.hide {
+    animation: toastSlideOut 0.4s ease forwards;
+}
+
+@keyframes toastSlideIn {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes toastSlideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(30px); opacity: 0; }
+}
+
+
+/* =============================================
    CANDIDATES LIST
    ============================================= */
 

@@ -1,0 +1,77 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['is_logged_in']) || $_SESSION['is_logged_in'] !== true) {
+    header('Location: login.html');
+    exit();
+}
+
+if ($_SESSION['user_role'] !== 'admin') {
+    header('Location: no-access.html');
+    exit();
+}
+
+$user_name = $_SESSION['user_name'] ?? 'Admin';
+$user_first_name = $_SESSION['user_first_name'] ?? '';
+if (empty($user_first_name)) {
+    $name = trim($user_name);
+    $user_first_name = $name !== '' ? explode(' ', $name)[0] : 'Admin';
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Candidate Table</title>
+    <link rel="stylesheet" href="../CSS/admin.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <span class="logo">📋</span>
+            <div>
+                <h1>Candidate List</h1>
+                <small>Orodha ya wagombea kwa msimamizi</small>
+            </div>
+        </div>
+        <div class="user-info">
+            <span class="user-name">👤 <?php echo htmlspecialchars($user_name); ?></span>
+            <span class="role-badge">🔐 Admin</span>
+            <a href="../PHP/logout.php" class="logout-btn">🚪 Logout</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="welcome-section">
+            <h2>👋 Habari, <?php echo htmlspecialchars($user_first_name); ?></h2>
+            <p>Angalia maelezo ya wagombea wote waliopo kwenye mfumo.</p>
+        </section>
+
+        <section class="candidates-section">
+            <div class="section-header">
+                <h3>Orodha ya Wagombea</h3>
+                <a href="admin_dashboard.html" class="btn-add">← Kurudi Dashboard</a>
+            </div>
+            <div class="voter-table-card">
+                <div id="candidatesTableContainer">Loading candidates...</div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        window.CSRF_TOKEN = null;
+        (async function () {
+            try {
+                const res = await fetch('../PHP/api/csrf.php');
+                const data = await res.json();
+                if (data && data.success) {
+                    window.CSRF_TOKEN = data.csrf_token;
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <script src="../JS/admin_candidates.js"></script>
+</body>
+</html>
